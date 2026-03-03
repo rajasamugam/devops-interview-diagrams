@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Interview Diagrams</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2332;
+    --border: #1e3a5f;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --accent4: #10b981;
+    --accent5: #f59e0b;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --public: #1a3a2a;
+    --private: #1a2a3a;
+    --db: #2a1a3a;
+    --app: #3a2a1a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+  .header {
+    padding: 32px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 100%);
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .header p { color: var(--text2); font-size: 14px; margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 16px 40px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 10px 20px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    border: 1px solid transparent;
+    border-bottom: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tab:hover { color: var(--text); background: var(--surface2); }
+  .tab.active { color: var(--accent); background: var(--bg); border-color: var(--border); }
+
+  .content { padding: 32px 40px; }
+  .diagram { display: none; }
+  .diagram.active { display: block; }
+
+  .diagram-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .diagram-desc {
+    color: var(--text2);
+    font-size: 13px;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* ── DIAGRAM 1: 3-Tier AWS ── */
+  .vpc-box {
+    border: 2px solid #1e3a5f;
+    border-radius: 16px;
+    padding: 24px;
+    background: #0d1929;
+    position: relative;
+  }
+  .vpc-label {
+    position: absolute;
+    top: -13px;
+    left: 20px;
+    background: var(--bg);
+    padding: 2px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .az-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .az-col {
+    border: 1px solid #1e3a5f;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .az-header {
+    background: #0f2040;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .subnet {
+    margin: 10px;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px dashed;
+  }
+  .subnet.public { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.3); }
+  .subnet.private-web { background: rgba(0,212,255,0.06); border-color: rgba(0,212,255,0.3); }
+  .subnet.private-app { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.3); }
+  .subnet.private-db { background: rgba(124,58,237,0.06); border-color: rgba(124,58,237,0.3); }
+  .subnet-label {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .subnet.public .subnet-label { color: var(--accent4); }
+  .subnet.private-web .subnet-label { color: var(--accent); }
+  .subnet.private-app .subnet-label { color: var(--accent5); }
+  .subnet.private-db .subnet-label { color: var(--accent3); }
+
+  .service-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+  }
+  .service-icon { font-size: 16px; }
+  .service-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .span-box {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(0,212,255,0.06);
+    border: 1px dashed rgba(0,212,255,0.4);
+    border-radius: 10px;
+    padding: 12px 20px;
+    margin: 0 10px 10px;
+  }
+  .span-box-label { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 700; }
+  .arrow-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+    color: var(--text2);
+    font-size: 18px;
+  }
+  .internet-box {
+    text-align: center;
+    padding: 14px;
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent4);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* ── DIAGRAM 2: K8s Architecture ── */
+  .k8s-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+  }
+  .k8s-plane {
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .k8s-plane.control { border-color: rgba(124,58,237,0.5); background: rgba(124,58,237,0.05); }
+  .k8s-plane.worker { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.04); }
+  .plane-title {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .control .plane-title { color: var(--accent3); }
+  .worker .plane-title { color: var(--accent); }
+  .component-card {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .component-card.purple { border-left-color: var(--accent3); }
+  .component-card.blue { border-left-color: var(--accent); }
+  .component-card.green { border-left-color: var(--accent4); }
+  .component-card.orange { border-left-color: var(--accent5); }
+  .comp-name { font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .comp-desc { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+  .worker-nodes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .node-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .node-title { font-size: 11px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; }
+  .pod-grid { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .pod {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+  }
+
+  /* ── DIAGRAM 3: CI/CD Pipeline ── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .pipeline-stage {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+  .stage-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .stage-connector {
+    width: 2px;
+    height: 24px;
+    margin-left: 17px;
+  }
+  .stage-card {
+    margin-left: 16px;
+    flex: 1;
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .stage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .stage-name { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .stage-tools { display: flex; gap: 6px; }
+  .tool-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+  .stage-detail { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* ── DIAGRAM 4: Terraform Structure ── */
+  .tf-tree {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    line-height: 2;
+  }
+  .tf-dir { color: var(--accent5); font-weight: 700; }
+  .tf-file { color: var(--text2); }
+  .tf-comment { color: #4a6a4a; }
+  .tf-indent-1 { padding-left: 24px; }
+  .tf-indent-2 { padding-left: 48px; }
+  .tf-indent-3 { padding-left: 72px; }
+  .tf-highlight { color: var(--accent4); }
+
+  .tf-legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .legend-card {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border-left: 3px solid;
+  }
+  .legend-title { font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+  .legend-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+  /* ── DIAGRAM 5: Security Layers ── */
+  .security-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sec-layer {
+    border-radius: 10px;
+    padding: 16px 20px;
+    border: 1px solid;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .sec-icon { font-size: 28px; flex-shrink: 0; }
+  .sec-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+  .sec-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  .sec-tools { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .sec-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+  }
+
+  /* ── DIAGRAM 6: GitOps Flow ── */
+  .gitops-flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    align-items: center;
+  }
+  .flow-box {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .flow-icon { font-size: 28px; margin-bottom: 8px; }
+  .flow-name { font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text); }
+  .flow-sub { font-size: 10px; color: var(--text2); margin-top: 4px; line-height: 1.4; }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--accent);
+  }
+  .flow-steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .flow-step {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .step-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .step-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; font-family: 'JetBrains Mono', monospace; color: var(--text); }
+
+  /* ── DIAGRAM 7: DR Strategies ── */
+  .dr-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .dr-card {
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid;
+  }
+  .dr-tier {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-block;
+  }
+  .dr-name { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+  .dr-rto { font-size: 12px; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+  .dr-rpo { font-size: 12px; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .dr-points { font-size: 12px; color: var(--text2); line-height: 1.8; }
+  .dr-cost {
+    margin-top: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* ── DIAGRAM 8: Monitoring Stack ── */
+  .monitoring-stack {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .mon-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-top: 3px solid;
+    text-align: center;
+  }
+  .mon-icon { font-size: 32px; margin-bottom: 10px; }
+  .mon-name { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px; }
+  .mon-type { font-size: 10px; color: var(--text2); margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+  .mon-items { font-size: 11px; color: var(--text2); line-height: 1.8; text-align: left; }
+  .mon-items span { display: block; }
+  .mon-items span::before { content: "→ "; color: var(--accent); }
+
+  /* ── MISC ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+  .tip-box {
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .tip-box strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🚀 DevOps Interview Diagrams</h1>
+  <p>// 8 essential architecture diagrams for your DevOps interview prep</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showDiagram(0)">01 · 3-Tier AWS</div>
+  <div class="tab" onclick="showDiagram(1)">02 · K8s Architecture</div>
+  <div class="tab" onclick="showDiagram(2)">03 · CI/CD Pipeline</div>
+  <div class="tab" onclick="showDiagram(3)">04 · Terraform Structure</div>
+  <div class="tab" onclick="showDiagram(4)">05 · Security Layers</div>
+  <div class="tab" onclick="showDiagram(5)">06 · GitOps Flow</div>
+  <div class="tab" onclick="showDiagram(6)">07 · DR Strategies</div>
+  <div class="tab" onclick="showDiagram(7)">08 · Monitoring Stack</div>
+</div>
+
+<div class="content">
+
+  <!-- ── DIAGRAM 1: 3-Tier AWS ── -->
+  <div class="diagram active" id="d0">
+    <div class="diagram-title">3-Tier AWS Architecture</div>
+    <div class="diagram-desc">Production-ready VPC layout across 3 AZs · public + private subnets · multi-AZ database · ALB at each tier</div>
+
+    <div class="internet-box">🌐 Internet &nbsp;→&nbsp; Route 53 (DNS) &nbsp;→&nbsp; CloudFront (CDN) &nbsp;→&nbsp; WAF + Shield</div>
+    <div class="arrow-row">↓</div>
+
+    <div class="vpc-box">
+      <div class="vpc-label">VPC · 10.0.0.0/16</div>
+
+      <!-- Frontend ALB spans all AZs -->
+      <div style="margin: 8px 0 4px;">
+        <div class="span-box">
+          <span style="font-size:20px">⚖️</span>
+          <span class="span-box-label">frontend-alb · Internet-Facing · Port 443 HTTPS · spans all 3 AZs</span>
+        </div>
+      </div>
+      <div class="arrow-row">↓</div>
+
+      <div class="az-grid">
+        <div class="az-col">
+          <div class="az-header">☁️ Availability Zone A</div>
+          <div class="subnet public">
+            <div class="subnet-label"><span>public-web-subnet-a</span><span>10.0.0.0/20</span></div>
+            <div class="service-box"><span class="service-icon">🌐</span><span class="service-name">NAT Gateway</span></div>
+          </div>
+          <div class="subnet private-web">
+            <div class="subnet-label"><span>private-web-subnet-a</span><span>10.0.48.0/20</span></div>
+            <div class="service-box"><span class="service-icon">🖥️</span><span class="service-name">frontend-server</span></div>
+          </div>
+          <div class="subnet private-app">
+            <div class="subnet-label"><span>private-app-subnet-a</span><span>10.0.96.0/20</span></div>
+            <div class="service-box"><span class="service-icon">⚙️</span><span class="service-name">backend-server</span></div>
+          </div>
+          <div class="subnet private-db">
+            <div class="subnet-label"><span>private-db-subnet-a</span><span>10.0.144.0/20</span></div>
+            <div class="service-box"><span class="service-icon">🗄️</span><span class="service-name">RDS Primary ★</span></div>
+          </div>
+        </div>
+        <div class="az-col">
+          <div class="az-header">☁️ Availability Zone B</div>
+          <div class="subnet public">
+            <div class="subnet-label"><span>public-web-subnet-b</span><span>10.0.16.0/20</span></div>
+            <div class="service-box"><span class="service-icon">🌐</span><span class="service-name">NAT Gateway</span></div>
+          </div>
+          <div class="subnet private-web">
+            <div class="subnet-label"><span>private-web-subnet-b</span><span>10.0.64.0/20</span></div>
+            <div class="service-box"><span class="service-icon">🖥️</span><span class="service-name">frontend-server</span></div>
+          </div>
+          <div class="subnet private-app">
+            <div class="subnet-label"><span>private-app-subnet-b</span><span>10.0.112.0/20</span></div>
+            <div class="service-box"><span class="service-icon">⚙️</span><span class="service-name">backend-server</span></div>
+          </div>
+          <div class="subnet private-db">
+            <div class="subnet-label"><span>private-db-subnet-b</span><span>10.0.160.0/20</span></div>
+            <div class="service-box"><span class="service-icon">🗄️</span><span class="service-name">RDS Standby ↔</span></div>
+          </div>
+        </div>
+        <div class="az-col">
+          <div class="az-header">☁️ Availability Zone C</div>
+          <div class="subnet public">
+            <div class="subnet-label"><span>public-web-subnet-c</span><span>10.0.32.0/20</span></div>
+            <div style="height:32px"></div>
+          </div>
+          <div class="subnet private-web">
+            <div class="subnet-label"><span>private-web-subnet-c</span><span>10.0.80.0/20</span></div>
+            <div class="service-box"><span class="service-icon">🖥️</span><span class="service-name">frontend-server</span></div>
+          </div>
+          <div class="subnet private-app">
+            <div class="subnet-label"><span>private-app-subnet-c</span><span>10.0.128.0/20</span></div>
+            <div class="service-box"><span class="service-icon">⚙️</span><span class="service-name">backend-server</span></div>
+          </div>
+          <div class="subnet private-db">
+            <div class="subnet-label"><span>private-db-subnet-c</span><span>10.0.176.0/20</span></div>
+            <div class="service-box"><span class="service-icon">📖</span><span class="service-name">RDS Read Replica</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backend ALB -->
+      <div style="margin: 12px 0 4px;">
+        <div class="span-box" style="border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05);">
+          <span style="font-size:20px">⚖️</span>
+          <span class="span-box-label" style="color: var(--accent5)">backend-alb · Internal · Port 8080 · spans all 3 AZs · NOT internet-facing</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> Key points to mention — (1) NAT Gateway in public subnet for private server outbound traffic, (2) ALBs in public subnets route to private servers, (3) backend-alb is internal-only, (4) RDS Multi-AZ = synchronous replication = automatic failover in 1-2 mins, (5) Read Replica in AZ-C for read scaling, (6) Security Groups at instance level + NACLs at subnet level.
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 2: K8s Architecture ── -->
+  <div class="diagram" id="d1">
+    <div class="diagram-title">Kubernetes Architecture</div>
+    <div class="diagram-desc">Control plane components · worker node components · how kubectl commands flow through the cluster</div>
+
+    <div class="k8s-grid">
+      <div class="k8s-plane control">
+        <div class="plane-title">🧠 Control Plane (Master Node)</div>
+
+        <div class="component-card purple">
+          <div>
+            <div class="comp-name">🌐 API Server</div>
+            <div class="comp-desc">Front door of the cluster. ALL communication goes through here — kubectl, pipelines, internal components. Validates and processes REST requests.</div>
+          </div>
+        </div>
+        <div class="component-card blue">
+          <div>
+            <div class="comp-name">🗄️ etcd</div>
+            <div class="comp-desc">Distributed key-value store. Brain of the cluster. Stores ALL cluster state — configs, secrets, resource definitions, current status.</div>
+          </div>
+        </div>
+        <div class="component-card green">
+          <div>
+            <div class="comp-name">📅 Scheduler</div>
+            <div class="comp-desc">Watches for unscheduled pods. Selects best node based on: resources, taints/tolerations, affinity rules, node conditions.</div>
+          </div>
+        </div>
+        <div class="component-card orange">
+          <div>
+            <div class="comp-name">🔄 Controller Manager</div>
+            <div class="comp-desc">Runs control loops. ReplicaSet controller maintains desired pod count. Node controller monitors node health. Job controller manages batch jobs.</div>
+          </div>
+        </div>
+        <div class="component-card purple">
+          <div>
+            <div class="comp-name">☁️ Cloud Controller</div>
+            <div class="comp-desc">Integrates with cloud provider APIs. Manages Load Balancers, Node lifecycle and Routes in AWS/GCP/Azure.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="k8s-plane worker">
+        <div class="plane-title">⚙️ Worker Nodes</div>
+        <div class="worker-nodes">
+          <div class="node-box">
+            <div class="node-title">Node 1 · m5.xlarge</div>
+            <div class="component-card blue" style="margin-bottom:6px">
+              <div>
+                <div class="comp-name">🔗 kubelet</div>
+                <div class="comp-desc">Agent on every node. Receives pod specs from API server. Ensures containers are running and healthy.</div>
+              </div>
+            </div>
+            <div class="component-card green" style="margin-bottom:6px">
+              <div>
+                <div class="comp-name">🔀 kube-proxy</div>
+                <div class="comp-desc">Manages iptables/IPVS rules. Enables pod-to-pod and service-to-pod communication.</div>
+              </div>
+            </div>
+            <div class="component-card orange" style="margin-bottom:6px">
+              <div>
+                <div class="comp-name">📦 Container Runtime</div>
+                <div class="comp-desc">containerd / CRI-O. Actually runs the containers.</div>
+              </div>
+            </div>
+            <div class="pod-grid">
+              <div class="pod">pod: api-1</div>
+              <div class="pod">pod: api-2</div>
+              <div class="pod">pod: worker-1</div>
+            </div>
+          </div>
+          <div class="node-box">
+            <div class="node-title">Node 2 · m5.xlarge</div>
+            <div class="component-card blue" style="margin-bottom:6px">
+              <div>
+                <div class="comp-name">🔗 kubelet</div>
+                <div class="comp-desc">Same as Node 1. Every node has a kubelet reporting to control plane.</div>
+              </div>
+            </div>
+            <div class="component-card green" style="margin-bottom:6px">
+              <div>
+                <div class="comp-name">🔀 kube-proxy</div>
+                <div class="comp-desc">Each node has its own kube-proxy maintaining local network rules.</div>
+              </div>
+            </div>
+            <div class="component-card orange" style="margin-bottom:6px">
+              <div>
+                <div class="comp-name">📦 Container Runtime</div>
+                <div class="comp-desc">containerd / CRI-O. Pulls images, creates containers.</div>
+              </div>
+            </div>
+            <div class="pod-grid">
+              <div class="pod">pod: frontend-1</div>
+              <div class="pod">pod: cache-1</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; background: rgba(124,58,237,0.08); border: 1px dashed rgba(124,58,237,0.3); border-radius: 8px; padding: 12px 14px;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--accent3); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">📋 Scheduler Decision Flow</div>
+          <div style="font-size: 11px; color: var(--text2); line-height: 1.8;">
+            1. <strong style="color:var(--text)">Filtering</strong> → remove nodes with insufficient CPU/Memory, taints without toleration, wrong affinity<br>
+            2. <strong style="color:var(--text)">Scoring</strong> → rank remaining nodes by available resources, spread policies, affinity score<br>
+            3. <strong style="color:var(--text)">Binding</strong> → pod assigned to highest scoring node
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> etcd = database of cluster, API Server = single entry point, Scheduler = decides WHERE pods run, Controller Manager = ensures desired state matches actual state, kubelet = ensures pods RUN on each node, kube-proxy = handles NETWORKING between pods.
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 3: CI/CD Pipeline ── -->
+  <div class="diagram" id="d2">
+    <div class="diagram-title">Complete CI/CD Pipeline</div>
+    <div class="diagram-desc">Code commit → build → test → scan → deploy · with tools at each stage · from developer to production</div>
+
+    <div class="pipeline">
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(16,185,129,0.2); color: var(--accent4); border: 2px solid var(--accent4);">1</div>
+          <div style="width:2px; flex:1; background: linear-gradient(var(--accent4), var(--accent)); margin: 4px 0;"></div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent4);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent4)">💾 Code Commit & PR</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4); border: 1px solid var(--accent4);">GitHub</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4); border: 1px solid var(--accent4);">GitLab</span>
+            </div>
+          </div>
+          <div class="stage-detail">Developer pushes feature branch → opens Pull Request → pipeline triggers automatically on PR creation. Branch protection rules prevent direct commits to main.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(0,212,255,0.2); color: var(--accent); border: 2px solid var(--accent);">2</div>
+          <div style="width:2px; flex:1; background: linear-gradient(var(--accent), var(--accent5)); margin: 4px 0;"></div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent)">🔍 Static Code Analysis</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid var(--accent);">SonarQube</span>
+              <span class="tool-tag" style="background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid var(--accent);">ESLint</span>
+            </div>
+          </div>
+          <div class="stage-detail">Quality Gates: code coverage ≥ 80%, zero critical issues, duplication &lt; 3%. If gate fails → pipeline stops, developer notified. No broken code proceeds.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(245,158,11,0.2); color: var(--accent5); border: 2px solid var(--accent5);">3</div>
+          <div style="width:2px; flex:1; background: linear-gradient(var(--accent5), var(--accent3)); margin: 4px 0;"></div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent5);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent5)">🧪 Unit & Integration Tests</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5); border: 1px solid var(--accent5);">JUnit</span>
+              <span class="tool-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5); border: 1px solid var(--accent5);">pytest</span>
+            </div>
+          </div>
+          <div class="stage-detail">Run all unit tests and integration tests. Parallel test execution to reduce pipeline time. Test results published as artifacts for review.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(124,58,237,0.2); color: var(--accent3); border: 2px solid var(--accent3);">4</div>
+          <div style="width:2px; flex:1; background: linear-gradient(var(--accent3), var(--accent2)); margin: 4px 0;"></div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent3);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent3)">🔒 Security Scanning (SAST)</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3); border: 1px solid var(--accent3);">OWASP ZAP</span>
+              <span class="tool-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3); border: 1px solid var(--accent3);">Terrascan</span>
+            </div>
+          </div>
+          <div class="stage-detail">SAST scan for SQL injection, XSS, broken auth. For Terraform code: Checkov/Terrascan checks for open security groups, unencrypted storage, IAM misconfigs.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(255,107,53,0.2); color: var(--accent2); border: 2px solid var(--accent2);">5</div>
+          <div style="width:2px; flex:1; background: linear-gradient(var(--accent2), var(--accent4)); margin: 4px 0;"></div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent2);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent2)">🐳 Build & Container Scan</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid var(--accent2);">Docker</span>
+              <span class="tool-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid var(--accent2);">Trivy</span>
+              <span class="tool-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid var(--accent2);">Aqua</span>
+            </div>
+          </div>
+          <div class="stage-detail">Multi-stage Docker build (slim final image). Trivy/Aqua scans image for CVEs → --exit-code 1 fails pipeline on CRITICAL findings. Sign image for Binary Authorization.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(16,185,129,0.2); color: var(--accent4); border: 2px solid var(--accent4);">6</div>
+          <div style="width:2px; flex:1; background: linear-gradient(var(--accent4), var(--accent)); margin: 4px 0;"></div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent4);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent4)">📤 Push to Registry</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4); border: 1px solid var(--accent4);">ECR</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4); border: 1px solid var(--accent4);">GCR</span>
+            </div>
+          </div>
+          <div class="stage-detail">Tag: app:1.3.0-build-42-abc123f · Push verified + signed image to ECR. Update Helm chart values.yaml with new image tag. Commit back to GitOps repo.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(0,212,255,0.2); color: var(--accent); border: 2px solid var(--accent);">7</div>
+          <div style="width:2px; flex:1; background: linear-gradient(var(--accent), var(--accent3)); margin: 4px 0;"></div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent)">🚀 Deploy via ArgoCD</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid var(--accent);">ArgoCD</span>
+              <span class="tool-tag" style="background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid var(--accent);">Helm</span>
+            </div>
+          </div>
+          <div class="stage-detail">ArgoCD detects new image tag in Git → triggers Helm upgrade on EKS → Rolling update / Canary strategy → readiness/liveness probes validate. Auto-rollback on failure.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:stretch;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="stage-number" style="background: rgba(124,58,237,0.2); color: var(--accent3); border: 2px solid var(--accent3);">8</div>
+        </div>
+        <div class="stage-card" style="border-left: 3px solid var(--accent3);">
+          <div class="stage-header">
+            <span class="stage-name" style="color: var(--accent3)">✅ Manual Gate → Production</span>
+            <div class="stage-tools">
+              <span class="tool-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3); border: 1px solid var(--accent3);">Approval</span>
+            </div>
+          </div>
+          <div class="stage-detail">Pipeline pauses for senior engineer review → approves Terraform plan / deployment plan → ArgoCD syncs to production cluster. Full audit trail in Git.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> Mention BOTH CI (build/test/scan = GitHub Actions / GitLab CI / Jenkins) and CD (deploy = ArgoCD) as separate concerns. Key terms: Quality Gate, SAST, image signing, binary authorization, GitOps, rolling update, canary, manual approval gate.
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 4: Terraform Structure ── -->
+  <div class="diagram" id="d3">
+    <div class="diagram-title">Terraform Directory Structure</div>
+    <div class="diagram-desc">Multi-environment modular structure · best practices · remote state · workspace strategy</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="tf-tree">
+          <div><span class="tf-dir">terraform/</span></div>
+          <div class="tf-indent-1"><span class="tf-dir">modules/</span> <span class="tf-comment"># reusable components</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">vpc/</span></div>
+          <div class="tf-indent-3"><span class="tf-highlight">main.tf</span> <span class="tf-file">variables.tf</span> <span class="tf-file">outputs.tf</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">eks/</span></div>
+          <div class="tf-indent-3"><span class="tf-highlight">main.tf</span> <span class="tf-file">variables.tf</span> <span class="tf-file">outputs.tf</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">rds/</span></div>
+          <div class="tf-indent-3"><span class="tf-highlight">main.tf</span> <span class="tf-file">variables.tf</span> <span class="tf-file">outputs.tf</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">security/</span></div>
+          <div class="tf-indent-3"><span class="tf-highlight">main.tf</span> <span class="tf-file">variables.tf</span> <span class="tf-file">outputs.tf</span></div>
+          <div class="tf-indent-1">&nbsp;</div>
+          <div class="tf-indent-1"><span class="tf-dir">environments/</span> <span class="tf-comment"># env-specific configs</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">dev/</span></div>
+          <div class="tf-indent-3"><span class="tf-highlight">main.tf</span> <span class="tf-file">backend.tf</span></div>
+          <div class="tf-indent-3" style="color: var(--accent5)">terraform.tfvars <span class="tf-comment"># t3.medium</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">stage/</span></div>
+          <div class="tf-indent-3"><span class="tf-highlight">main.tf</span> <span class="tf-file">backend.tf</span></div>
+          <div class="tf-indent-3" style="color: var(--accent5)">terraform.tfvars <span class="tf-comment"># t3.large</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">prod/</span></div>
+          <div class="tf-indent-3"><span class="tf-highlight">main.tf</span> <span class="tf-file">backend.tf</span></div>
+          <div class="tf-indent-3" style="color: var(--accent5)">terraform.tfvars <span class="tf-comment"># m5.xlarge</span></div>
+          <div class="tf-indent-1">&nbsp;</div>
+          <div class="tf-indent-1"><span class="tf-dir">landing-zone/</span> <span class="tf-comment"># multi-account</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">logging-account/</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">security-account/</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">network-account/</span></div>
+          <div class="tf-indent-2"><span class="tf-dir">workload-accounts/</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; margin-bottom: 12px;">🔒 Remote Backend Config</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 2; color: var(--text2);">
+            <span style="color: var(--accent3)">terraform</span> {<br>
+            &nbsp;&nbsp;<span style="color: var(--accent3)">backend</span> <span style="color: var(--accent5)">"s3"</span> {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;bucket &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span style="color: var(--accent4)">"tf-state-prod"</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;key &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span style="color: var(--accent4)">"prod/eks/terraform.tfstate"</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;region &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span style="color: var(--accent4)">"us-east-1"</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;encrypt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span style="color: var(--accent2)">true</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;dynamodb_table = <span style="color: var(--accent4)">"tf-lock"</span><br>
+            &nbsp;&nbsp;}<br>
+            }
+          </div>
+        </div>
+
+        <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--accent5); font-family: 'JetBrains Mono', monospace; margin-bottom: 12px;">🔄 Module Call Pattern</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 2; color: var(--text2);">
+            <span style="color: var(--accent3)">module</span> <span style="color: var(--accent5)">"eks"</span> {<br>
+            &nbsp;&nbsp;source &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span style="color: var(--accent4)">"../../modules/eks"</span><br>
+            &nbsp;&nbsp;cluster_name = <span style="color: var(--accent4)">"prod-cluster"</span><br>
+            &nbsp;&nbsp;node_type &nbsp;&nbsp;&nbsp;= <span style="color: var(--accent4)">var.node_instance_type</span><br>
+            &nbsp;&nbsp;min_nodes &nbsp;&nbsp;&nbsp;= <span style="color: var(--accent2)">3</span><br>
+            &nbsp;&nbsp;max_nodes &nbsp;&nbsp;&nbsp;= <span style="color: var(--accent2)">10</span><br>
+            }
+          </div>
+        </div>
+
+        <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--accent3); font-family: 'JetBrains Mono', monospace; margin-bottom: 12px;">🛡️ Prevent Manual Deletion</div>
+          <div style="font-size: 12px; color: var(--text2); line-height: 1.8;">
+            1. Tag all TF resources: <span style="color: var(--accent4); font-family: 'JetBrains Mono', monospace">ManagedBy = "terraform"</span><br>
+            2. IAM <strong style="color: var(--accent2)">Deny</strong> policy with condition:<br>
+            &nbsp;&nbsp;→ Effect: Deny<br>
+            &nbsp;&nbsp;→ Action: ec2:TerminateInstances<br>
+            &nbsp;&nbsp;→ Condition: ResourceTag/ManagedBy = terraform<br>
+            3. Attach Deny policy to all IAM users<br>
+            4. <strong style="color: var(--text)">Explicit Deny always overrides Allow</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tf-legend">
+      <div class="legend-card" style="border-left-color: var(--accent4);">
+        <div class="legend-title" style="color: var(--accent4)">State Locking</div>
+        <div class="legend-desc">S3 stores state file. DynamoDB creates lock entry when apply runs. Second engineer gets "Error: state locked" until first finishes.</div>
+      </div>
+      <div class="legend-card" style="border-left-color: var(--accent5);">
+        <div class="legend-title" style="color: var(--accent5)">Drift Detection</div>
+        <div class="legend-desc">terraform plan -detailed-exitcode detects drift. terraform import pulls manual changes into state. terraform refresh syncs state without applying.</div>
+      </div>
+      <div class="legend-card" style="border-left-color: var(--accent3);">
+        <div class="legend-title" style="color: var(--accent3)">Safe Rename</div>
+        <div class="legend-desc">terraform state mv old_name new_name renames resource in state only. No infrastructure change. Prevents accidental delete+recreate.</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> Always mention 5 Terraform best practices: (1) modular structure, (2) remote backend with versioning, (3) state locking with DynamoDB, (4) terraform plan before apply, (5) secrets in Vault/Secrets Manager never in .tf files.
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 5: Security Layers ── -->
+  <div class="diagram" id="d4">
+    <div class="diagram-title">DevOps Security Layers</div>
+    <div class="diagram-desc">Defense in depth · security at every layer from code to runtime · DevSecOps approach</div>
+
+    <div class="security-layers">
+      <div class="sec-layer" style="background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.3);">
+        <div class="sec-icon">💻</div>
+        <div style="flex:1">
+          <div class="sec-name" style="color: var(--accent4)">Layer 1 — Code Security</div>
+          <div class="sec-desc">Security starts at the developer's machine. Secrets should never enter the codebase. SAST catches vulnerabilities before code is committed.</div>
+          <div class="sec-tools">
+            <span class="sec-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4)">SonarQube</span>
+            <span class="sec-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4)">git-secrets</span>
+            <span class="sec-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4)">pre-commit hooks</span>
+            <span class="sec-tag" style="background: rgba(16,185,129,0.1); color: var(--accent4)">OWASP ZAP (DAST)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-layer" style="background: rgba(0,212,255,0.06); border-color: rgba(0,212,255,0.3);">
+        <div class="sec-icon">🐳</div>
+        <div style="flex:1">
+          <div class="sec-name" style="color: var(--accent)">Layer 2 — Container Security</div>
+          <div class="sec-desc">Scan images for CVEs before they reach any cluster. Only signed images allowed to run. Minimal base images reduce attack surface.</div>
+          <div class="sec-tools">
+            <span class="sec-tag" style="background: rgba(0,212,255,0.1); color: var(--accent)">Trivy (--exit-code 1)</span>
+            <span class="sec-tag" style="background: rgba(0,212,255,0.1); color: var(--accent)">Aqua Security</span>
+            <span class="sec-tag" style="background: rgba(0,212,255,0.1); color: var(--accent)">Binary Authorization</span>
+            <span class="sec-tag" style="background: rgba(0,212,255,0.1); color: var(--accent)">Cosign (image signing)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-layer" style="background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.3);">
+        <div class="sec-icon">☸️</div>
+        <div style="flex:1">
+          <div class="sec-name" style="color: var(--accent5)">Layer 3 — Kubernetes Security</div>
+          <div class="sec-desc">Control what runs in the cluster, who can access what, and how pods communicate with each other.</div>
+          <div class="sec-tools">
+            <span class="sec-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5)">RBAC</span>
+            <span class="sec-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5)">NetworkPolicy</span>
+            <span class="sec-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5)">OPA Gatekeeper</span>
+            <span class="sec-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5)">Pod Security Admission</span>
+            <span class="sec-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5)">IRSA (no access keys)</span>
+            <span class="sec-tag" style="background: rgba(245,158,11,0.1); color: var(--accent5)">Istio mTLS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-layer" style="background: rgba(124,58,237,0.06); border-color: rgba(124,58,237,0.3);">
+        <div class="sec-icon">☁️</div>
+        <div style="flex:1">
+          <div class="sec-name" style="color: var(--accent3)">Layer 4 — Cloud / Network Security</div>
+          <div class="sec-desc">AWS-level protection. Control traffic at subnet level, protect against DDoS, manage secrets centrally.</div>
+          <div class="sec-tools">
+            <span class="sec-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3)">Security Groups</span>
+            <span class="sec-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3)">NACLs</span>
+            <span class="sec-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3)">WAF</span>
+            <span class="sec-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3)">AWS Shield</span>
+            <span class="sec-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3)">Secrets Manager</span>
+            <span class="sec-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3)">IAM least privilege</span>
+            <span class="sec-tag" style="background: rgba(124,58,237,0.1); color: var(--accent3)">VPC Flow Logs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-layer" style="background: rgba(255,107,53,0.06); border-color: rgba(255,107,53,0.3);">
+        <div class="sec-icon">🔍</div>
+        <div style="flex:1">
+          <div class="sec-name" style="color: var(--accent2)">Layer 5 — Audit & Compliance</div>
+          <div class="sec-desc">Continuous monitoring for threats, configuration drift and compliance violations. Everything is logged and audited.</div>
+          <div class="sec-tools">
+            <span class="sec-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2)">CloudTrail</span>
+            <span class="sec-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2)">GuardDuty</span>
+            <span class="sec-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2)">AWS Config</span>
+            <span class="sec-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2)">Falco (runtime)</span>
+            <span class="sec-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2)">Prisma Cloud</span>
+            <span class="sec-tag" style="background: rgba(255,107,53,0.1); color: var(--accent2)">Security Hub</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> Always answer security questions in layers — code → container → Kubernetes → cloud → audit. Key phrase: <em>"Defense in Depth"</em>. Never hardcode secrets. IRSA for EKS pod AWS access (no access keys). Explicit Deny in IAM always overrides Allow.
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 6: GitOps Flow ── -->
+  <div class="diagram" id="d5">
+    <div class="diagram-title">GitOps Flow with ArgoCD</div>
+    <div class="diagram-desc">Git as single source of truth · continuous reconciliation · drift detection · declarative deployments</div>
+
+    <div class="gitops-flow">
+      <div class="flow-box" style="border-color: var(--accent4); background: rgba(16,185,129,0.08);">
+        <div class="flow-icon">👨‍💻</div>
+        <div class="flow-name">Developer</div>
+        <div class="flow-sub">Pushes code to feature branch, opens PR</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color: var(--accent); background: rgba(0,212,255,0.08);">
+        <div class="flow-icon">🔄</div>
+        <div class="flow-name">CI Pipeline</div>
+        <div class="flow-sub">Build, test, scan, push image to ECR</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color: var(--accent5); background: rgba(245,158,11,0.08);">
+        <div class="flow-icon">📦</div>
+        <div class="flow-name">Git Repo</div>
+        <div class="flow-sub">Update Helm values.yaml with new image tag</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color: var(--accent3); background: rgba(124,58,237,0.08);">
+        <div class="flow-icon">🔁</div>
+        <div class="flow-name">ArgoCD</div>
+        <div class="flow-sub">Detects Git change, syncs to cluster</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color: var(--accent2); background: rgba(255,107,53,0.08);">
+        <div class="flow-icon">☸️</div>
+        <div class="flow-name">EKS Cluster</div>
+        <div class="flow-sub">Rolling update deployed, health checks pass</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="grid-2">
+      <div>
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; color: var(--accent)">🔄 GitOps vs Traditional CI/CD</div>
+        <div style="background: var(--surface); border-radius: 10px; overflow: hidden; border: 1px solid var(--border);">
+          <div style="display: grid; grid-template-columns: 1fr 1fr;">
+            <div style="padding: 12px 14px; background: rgba(255,107,53,0.06); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+              <div style="font-size: 11px; font-weight: 700; color: var(--accent2); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">❌ Traditional Push</div>
+              <div style="font-size: 11px; color: var(--text2); line-height: 1.7;">Pipeline runs kubectl apply<br>Manual drift undetected<br>No single source of truth<br>Rollback = re-run pipeline<br>No auto-reconciliation</div>
+            </div>
+            <div style="padding: 12px 14px; background: rgba(16,185,129,0.06); border-bottom: 1px solid var(--border);">
+              <div style="font-size: 11px; font-weight: 700; color: var(--accent4); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">✅ GitOps Pull</div>
+              <div style="font-size: 11px; color: var(--text2); line-height: 1.7;">ArgoCD pulls from Git<br>Drift detected + corrected<br>Git = single source of truth<br>Rollback = git revert<br>Continuous reconciliation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; color: var(--accent3)">🎯 ArgoCD Key Concepts</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="step-num">A</div>
+            <div><div class="step-title">Application</div><div class="step-text">ArgoCD resource that links a Git repo path to a cluster/namespace target</div></div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">S</div>
+            <div><div class="step-title">Sync</div><div class="step-text">Process of making cluster match the desired state in Git. Auto or manual.</div></div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">D</div>
+            <div><div class="step-title">Drift</div><div class="step-text">When actual cluster state differs from Git. ArgoCD shows OutOfSync status.</div></div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">H</div>
+            <div><div class="step-title">Health</div><div class="step-text">ArgoCD checks if deployed resources are healthy — pods running, ingress responding.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> GitOps = Git is the source of truth. ArgoCD = the reconciler that keeps cluster in sync with Git. Helm = templating for K8s manifests. The key benefit: if cluster is destroyed, ArgoCD can recreate everything from Git in minutes. Rollback = git revert commit.
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 7: DR Strategies ── -->
+  <div class="diagram" id="d6">
+    <div class="diagram-title">Disaster Recovery Strategies</div>
+    <div class="diagram-desc">RTO vs RPO tradeoffs · cold vs warm vs hot standby · cost vs availability spectrum</div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: var(--surface); border-radius: 10px; padding: 14px 20px; border: 1px solid var(--border);">
+      <div style="font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text2)">
+        <span style="color: var(--accent4)">RTO</span> = Recovery Time Objective (how fast you recover)&nbsp;&nbsp;|&nbsp;&nbsp;<span style="color: var(--accent3)">RPO</span> = Recovery Point Objective (how much data you lose)
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace;">
+        <span style="color: var(--accent4)">💰 Low Cost</span>
+        <span style="color: var(--border)">────────────────→</span>
+        <span style="color: var(--accent2)">💰💰💰 High Cost</span>
+      </div>
+    </div>
+
+    <div class="dr-grid">
+      <div class="dr-card" style="border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.05);">
+        <div class="dr-tier" style="background: rgba(16,185,129,0.15); color: var(--accent4)">TIER 1</div>
+        <div class="dr-name" style="color: var(--accent4)">🧊 Cold Standby</div>
+        <div class="dr-rto" style="color: var(--text2)">RTO: <strong style="color: var(--accent4)">Hours</strong></div>
+        <div class="dr-rpo" style="color: var(--text2)">RPO: <strong style="color: var(--accent4)">Hours (last backup)</strong></div>
+        <div class="dr-points">
+          → Backups stored in S3 + Glacier<br>
+          → AMIs / snapshots ready<br>
+          → Infrastructure defined in Terraform<br>
+          → Spin up ONLY when disaster occurs<br>
+          → Nothing running = zero idle cost<br>
+          → Acceptable for non-critical services
+        </div>
+        <div class="dr-cost" style="background: rgba(16,185,129,0.1); color: var(--accent4)">Cost: $ (lowest)</div>
+      </div>
+
+      <div class="dr-card" style="border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05);">
+        <div class="dr-tier" style="background: rgba(245,158,11,0.15); color: var(--accent5)">TIER 2</div>
+        <div class="dr-name" style="color: var(--accent5)">🌡️ Warm Standby</div>
+        <div class="dr-rto" style="color: var(--text2)">RTO: <strong style="color: var(--accent5)">Minutes (5-30 min)</strong></div>
+        <div class="dr-rpo" style="color: var(--text2)">RPO: <strong style="color: var(--accent5)">Seconds (near real-time)</strong></div>
+        <div class="dr-points">
+          → Scaled-down infra running in DR region<br>
+          → RDS Multi-AZ + Read Replicas<br>
+          → DynamoDB Global Tables<br>
+          → S3 Cross-Region Replication<br>
+          → Route 53 health check failover<br>
+          → Scale up when primary fails
+        </div>
+        <div class="dr-cost" style="background: rgba(245,158,11,0.1); color: var(--accent5)">Cost: $$ (moderate)</div>
+      </div>
+
+      <div class="dr-card" style="border-color: rgba(255,107,53,0.4); background: rgba(255,107,53,0.05);">
+        <div class="dr-tier" style="background: rgba(255,107,53,0.15); color: var(--accent2)">TIER 3</div>
+        <div class="dr-name" style="color: var(--accent2)">🔥 Hot Standby</div>
+        <div class="dr-rto" style="color: var(--text2)">RTO: <strong style="color: var(--accent2)">Seconds (near zero)</strong></div>
+        <div class="dr-rpo" style="color: var(--text2)">RPO: <strong style="color: var(--accent2)">Zero (no data loss)</strong></div>
+        <div class="dr-points">
+          → Full infra running in BOTH regions<br>
+          → Active-active or active-passive<br>
+          → Route 53 health checks + failover<br>
+          → Instant traffic rerouting<br>
+          → DynamoDB Global Tables (sync)<br>
+          → For payment / order / auth services
+        </div>
+        <div class="dr-cost" style="background: rgba(255,107,53,0.1); color: var(--accent2)">Cost: $$$ (highest)</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; background: var(--surface); border-radius: 10px; padding: 16px 20px; border: 1px solid var(--border);">
+      <div style="font-size: 13px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; margin-bottom: 10px;">💡 Hybrid Strategy (Cost-Sensitive E-Commerce)</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 12px; color: var(--text2); line-height: 1.8;">
+        <div>
+          <strong style="color: var(--accent2)">Critical Services → Hot/Warm Standby:</strong><br>
+          → Order creation, Payments, User auth<br>
+          → Cannot afford even 1 minute of downtime<br>
+          → Revenue directly impacted
+        </div>
+        <div>
+          <strong style="color: var(--accent4)">Non-Critical Services → Cold Standby:</strong><br>
+          → Reviews, Feedback, Complaints<br>
+          → Users can tolerate some downtime<br>
+          → Saves significant DR infrastructure cost
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> Always ask "what is the RTO and RPO requirement?" before recommending a DR strategy. Then mention cost. The hybrid approach (hot standby for critical + cold for non-critical) is the best answer for cost-sensitive customers. Route 53 health checks are the routing mechanism.
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 8: Monitoring Stack ── -->
+  <div class="diagram" id="d7">
+    <div class="diagram-title">Observability & Monitoring Stack</div>
+    <div class="diagram-desc">Metrics · logs · traces · alerts · the three pillars of observability with tools</div>
+
+    <div class="monitoring-stack">
+      <div class="mon-card" style="border-top-color: var(--accent4);">
+        <div class="mon-icon">📊</div>
+        <div class="mon-name" style="color: var(--accent4)">Prometheus</div>
+        <div class="mon-type">Metrics Collection</div>
+        <div class="mon-items">
+          <span>Pull-based scraping</span>
+          <span>kube-state-metrics</span>
+          <span>node-exporter</span>
+          <span>ServiceMonitor CRD</span>
+          <span>Alertmanager</span>
+          <span>PromQL queries</span>
+        </div>
+      </div>
+      <div class="mon-card" style="border-top-color: var(--accent5);">
+        <div class="mon-icon">📈</div>
+        <div class="mon-name" style="color: var(--accent5)">Grafana</div>
+        <div class="mon-type">Visualization</div>
+        <div class="mon-items">
+          <span>Custom dashboards</span>
+          <span>Namespace-wise CPU/RAM</span>
+          <span>API latency histogram</span>
+          <span>Error rate panels</span>
+          <span>Import: dashboard 315, 6417</span>
+          <span>Slack/email alerts</span>
+        </div>
+      </div>
+      <div class="mon-card" style="border-top-color: var(--accent);">
+        <div class="mon-icon">🔍</div>
+        <div class="mon-name" style="color: var(--accent)">AWS X-Ray</div>
+        <div class="mon-type">Distributed Tracing</div>
+        <div class="mon-items">
+          <span>Request tracing</span>
+          <span>Service map</span>
+          <span>Latency breakdown</span>
+          <span>API bottlenecks</span>
+          <span>Cross-service traces</span>
+          <span>Error root cause</span>
+        </div>
+      </div>
+      <div class="mon-card" style="border-top-color: var(--accent3);">
+        <div class="mon-icon">🐕</div>
+        <div class="mon-name" style="color: var(--accent3)">Datadog</div>
+        <div class="mon-type">Full Observability</div>
+        <div class="mon-items">
+          <span>APM + tracing</span>
+          <span>Log management</span>
+          <span>Infrastructure map</span>
+          <span>DaemonSet agent</span>
+          <span>Custom metrics</span>
+          <span>Anomaly detection</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="grid-2">
+      <div>
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; color: var(--accent)">📋 3 Pillars of Observability</div>
+        <div style="background: var(--surface); border-radius: 10px; padding: 16px; border: 1px solid var(--border);">
+          <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+            <div style="width: 40px; height: 40px; background: rgba(16,185,129,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">📊</div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: var(--accent4); font-family: 'JetBrains Mono', monospace;">Metrics</div>
+              <div style="font-size: 12px; color: var(--text2); line-height: 1.6;">Numeric measurements over time. CPU %, memory usage, request rate, error rate, latency p99. → Prometheus + Grafana</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+            <div style="width: 40px; height: 40px; background: rgba(245,158,11,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">📝</div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: var(--accent5); font-family: 'JetBrains Mono', monospace;">Logs</div>
+              <div style="font-size: 12px; color: var(--text2); line-height: 1.6;">Timestamped text records of events. Application errors, access logs, audit logs. → Fluent Bit + Loki / Datadog / CloudWatch</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; background: rgba(0,212,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">🔍</div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace;">Traces</div>
+              <div style="font-size: 12px; color: var(--text2); line-height: 1.6;">End-to-end request flow across microservices. Shows WHERE latency comes from. → AWS X-Ray / OpenTelemetry / Jaeger</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; color: var(--accent3)">⚙️ ServiceMonitor Pattern</div>
+        <div style="background: var(--surface); border-radius: 10px; padding: 16px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 2; color: var(--text2);">
+          <div style="color: var(--accent5)">apiVersion: monitoring.coreos.com/v1</div>
+          <div style="color: var(--accent5)">kind: ServiceMonitor</div>
+          <div>metadata:</div>
+          <div>&nbsp;&nbsp;name: <span style="color:var(--accent4)">my-app-monitor</span></div>
+          <div>spec:</div>
+          <div>&nbsp;&nbsp;selector:</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;matchLabels:</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;app: <span style="color:var(--accent4)">my-app</span></div>
+          <div>&nbsp;&nbsp;endpoints:</div>
+          <div>&nbsp;&nbsp;- port: <span style="color:var(--accent4)">metrics</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;path: <span style="color:var(--accent4)">/metrics</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;interval: <span style="color:var(--accent2)">30s</span></div>
+          <br>
+          <div style="color: var(--text2); font-size: 11px;">→ Prometheus Operator auto-discovers<br>→ No manual target config needed<br>→ App just needs /metrics endpoint</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Interview Tip:</strong> The 3 pillars = Metrics + Logs + Traces. kube-state-metrics = K8s object states (pod running/pending). node-exporter = hardware metrics (CPU/RAM/disk). ServiceMonitor = how Prometheus auto-discovers new apps. Alertmanager routes to Slack/email. CloudWatch for AWS native, Prometheus+Grafana for K8s metrics.
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showDiagram(index) {
+  document.querySelectorAll('.diagram').forEach((d, i) => {
+    d.classList.toggle('active', i === index);
+  });
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', i === index);
+  });
+}
+</script>
+</body>
+</html>
